@@ -1,0 +1,62 @@
+{
+  "name": "teamfurther/laravel-mail-match",
+  "description": "A wrapper for teamfurther/mail-match. Grabs emails via IMAP and automatically matches them to your Eloquent models.",
+  "keywords": [
+    "further",
+    "furtherdigitalsolutions",
+    "imap",
+    "laravel",
+    "mail-mapper"
+  ],
+  "homepage": "https://github.com/teamfurther/laravel-mail-mapper",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Peter Illés",
+      "email": "peter.illes@gofurther.digital",
+      "homepage": "https://gofurther.digital",
+      "role": "Developer"
+    },
+    {
+      "name": "Csongor Ur",
+      "email": "csongor.ur@gofurther.digital",
+      "homepage": "https://gofurther.digital",
+      "role": "Developer"
+    },
+    {
+      "name": "Norbert Zsombori",
+      "email": "norbert.zsombori@gofurther.digital",
+      "homepage": "https://gofurther.digital",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Further\\LaravelMailMatch\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Further\\LaravelMailMatch\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Further\\LaravelMailMatch\\LaravelMailMatchServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
