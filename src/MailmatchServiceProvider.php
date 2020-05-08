@@ -28,7 +28,7 @@ class MailmatchServiceProvider extends ServiceProvider
     /**
      * Publishes migrations.
      */
-    protected function publishMigratins()
+    protected function publishMigrations()
     {
         if (! class_exists('CreateMailmatchAttachmentsTable')) {
             $this->publishes([
