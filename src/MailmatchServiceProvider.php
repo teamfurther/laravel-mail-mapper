@@ -3,7 +3,7 @@
 namespace Further\Mailmatch;
 
 use Illuminate\Support\ServiceProvider;
-use Further\Mailmatch\Console\GoogleOauthCommand;
+use Further\Mailmatch\Console\Commands\GoogleOAuthCommand;
 
 class MailmatchServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class MailmatchServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                GoogleOauthCommand::class,
+                GoogleOAuthCommand::class,
             ]);
         }
     }

@@ -1,38 +1,36 @@
 <?php
 
-namespace Further\Mailmatch\Console\GoogleOauthCommand;
+namespace Further\Mailmatch\Console\Commands;
 
+use Google_Client;
+use Google_Service_Gmail;
 use Illuminate\Console\Command;
 
 class GoogleOAuthCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'mailmatch:generate-google-oauth-token';
-
-    /**
-     * @var
-     */
-    protected $googleClient;
-
-    /**
      * The console command description.
-     *
-     * @var string
      */
     protected $description = 'Generates the OAuth token to used by the Gmail API.';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
+     * @var Google_Client
      */
-    public function __construct()
+    protected $googleClient;
+
+    /**
+     * The name and signature of the console command.
+     */
+    protected $signature = 'mailmatch:generate-google-oauth-token';
+
+    /**
+     * Create a new command instance.
+     */
+    public function __construct(Google_Client $googleClient)
     {
         parent::__construct();
+
+        $this->googleClient = $googleClient;
     }
 
     /**
@@ -42,24 +40,36 @@ class GoogleOAuthCommand extends Command
      */
     public function handle()
     {
+        try {
+            $client = $this->getClient($this->getConfig());
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
 
+        return 'Authentication was successfully.';
     }
 
-    private function getClient()
+    /**
+     * Get Google client.
+     *
+     * @param array $config
+     * @return Google_Client
+     * @throws \Google_Exception
+     */
+    private function getClient(array $config): Google_Client
     {
-        $client = new Google_Client();
-        $client->setApplicationName('Gmail API PHP Quickstart');
+        $client = $this->googleClient;
         $client->setScopes(Google_Service_Gmail::GMAIL_READONLY);
-        $client->setAuthConfig('credentials.json');
+        $client->setAuthConfig($config);
         $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
-        //$client->setRedirectUri("https://laravelmailmatch.test");
 
         // Load previously authorized token from a file, if it exists.
         // The file token.json stores the user's access and refresh tokens, and is
         // created automatically when the authorization flow completes for the first
         // time.
-        $tokenPath = 'token.json';
+        $tokenPath = '../../../google-token.json';
+
         if (file_exists($tokenPath)) {
             $accessToken = json_decode(file_get_contents($tokenPath), true);
             $client->setAccessToken($accessToken);
@@ -92,6 +102,26 @@ class GoogleOAuthCommand extends Command
             }
             file_put_contents($tokenPath, json_encode($client->getAccessToken()));
         }
+
         return $client;
+    }
+
+    /**
+     * Get google client config array.
+     *
+     * @return array|array[]
+     */
+    private function getConfig(): array
+    {
+        return [
+            'installed' => [
+                'client_id' => env('GOOGLE_CLIENT_ID'),
+                'auth_uri' => env('GOOGLE_AUTH_URI'),
+                'token_uri' => env('GOOGLE_TOKEN_URI'),
+                'auth_provider_x509_cert_url' => env('GOOGLE_AUTH_PROVIDER_X509_CERT_URL'),
+                'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'redirect_uris' => [env('GOOGLE_REDIRECT_URI')]
+            ]
+        ];
     }
 }
