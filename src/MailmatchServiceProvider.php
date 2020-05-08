@@ -3,7 +3,7 @@
 namespace Further\Mailmatch;
 
 use Illuminate\Support\ServiceProvider;
-use Further\Mailmatch\Console\GoogleOauthCommand;
+use Further\Mailmatch\Console\Commands\GoogleOAuthCommand;
 
 class MailmatchServiceProvider extends ServiceProvider
 {
@@ -16,11 +16,11 @@ class MailmatchServiceProvider extends ServiceProvider
             __DIR__ . '/../config/mailmatch.php' => config_path('mailmatch.php'),
         ], 'config');
 
-        $this->publishMigration();
+        $this->publishMigrations();
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                GoogleOauthCommand::class,
+                GoogleOAuthCommand::class,
             ]);
         }
     }
@@ -28,7 +28,7 @@ class MailmatchServiceProvider extends ServiceProvider
     /**
      * Publishes migrations.
      */
-    protected function publishMigration()
+    protected function publishMigratins()
     {
         if (! class_exists('CreateMailmatchAttachmentsTable')) {
             $this->publishes([
