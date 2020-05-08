@@ -1,5 +1,5 @@
 {
-  "name": "teamfurther/laravel-mail-match",
+  "name": "teamfurther/laravel-mailmatch",
   "description": "A wrapper for teamfurther/mail-match. Grabs emails via IMAP and automatically matches them to your Eloquent models.",
   "keywords": [
     "further",

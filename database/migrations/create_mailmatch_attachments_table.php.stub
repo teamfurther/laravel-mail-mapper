@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateMailmatchAttachmentsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('mailmatch_attachments', function (Blueprint $table) {
+            $table->id();
+            $table->string('model_primary_key');
+            $table->integer('message_id')->unsigned()->index();
+            $table->foreign('message_id')->references('id')->on('mailmatch_messages')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('mailmatch_attachments');
+    }
+}
