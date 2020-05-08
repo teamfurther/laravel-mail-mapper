@@ -1,14 +1,14 @@
 {
-  "name": "teamfurther/laravel-mail-match",
-  "description": "A wrapper for teamfurther/mail-match. Grabs emails via IMAP and automatically matches them to your Eloquent models.",
+  "name": "teamfurther/laravel-mailmatch",
+  "description": "Grabs incoming emails and automatically matches them to your Eloquent models.",
   "keywords": [
     "further",
     "furtherdigitalsolutions",
     "imap",
     "laravel",
-    "mail-mapper"
+    "mailmatch"
   ],
-  "homepage": "https://github.com/teamfurther/laravel-mail-mapper",
+  "homepage": "https://github.com/teamfurther/laravel-mailmatch",
   "license": "MIT",
   "authors": [
     {
@@ -38,12 +38,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Further\\LaravelMailMatch\\": "src"
+      "Further\\Mailmatch\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Further\\LaravelMailMatch\\Tests\\": "tests"
+      "Further\\Mailmatch\\Tests\\": "tests"
     }
   },
   "scripts": {
@@ -53,7 +53,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Further\\LaravelMailMatch\\LaravelMailMatchServiceProvider"
+        "Further\\Mailmatch\\MailmatchServiceProvider"
       ]
     }
   },

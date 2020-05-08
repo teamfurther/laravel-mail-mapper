@@ -1,18 +1,30 @@
-# Email to PHP object matcher
+# Laravel Email to Eloquent model matcher
 
-Laravel MailMatch is a Laravel wrapper for our [MailMatch package](https://github.com/teamfurther/mail-match).
+Mailmatch grabs incoming emails and automatically matches them to your Eloquent models.
 
-MailMatch grabs emails via IMAP and automatically matches them to your Eloquent models.
-
-It's great if you wish to include email in a conversion or project activity feed, in a CRM for example.
+It's great if you wish to include email in a conversation or project activity feed, in a CRM for example.
 
 ## Installation
 
 You can install the package via composer:
 
-composer require teamfurther/laravel-mail-match
+```composer require teamfurther/laravel-mailmatch```
 
 The package will automatically register itself.
+
+This package comes with a migration to store all incoming email messages. You can publish the migration file using:
+
+```php artisan vendor:publish --provider="Further\Mailmatch\MailmatchServiceProvider" --tag="migrations"```
+
+Run the migrations with:
+
+```php artisan migrate```
+
+Next, you need to publish the configuration file:
+
+```php artisan vendor:publish --provider="Further\Mailmatch\MailmatchServiceProvider" --tag="config"```
+
+## Configuration
 
 ## Credits
 
@@ -22,4 +34,4 @@ The package will automatically register itself.
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/teamfurther/mail-match/blob/master/LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/teamfurther/laravel-mailmatch/blob/master/LICENSE.md) for more information.
