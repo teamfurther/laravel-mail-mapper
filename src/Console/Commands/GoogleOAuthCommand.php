@@ -10,7 +10,7 @@ class GoogleOAuthCommand extends Command
     /**
      * The console command description.
      */
-    protected $description = 'Generates the OAuth token to used by the Gmail API.';
+    protected $description = 'Generates the OAuth token to used by the Gmail API';
 
     /**
      * @var Google

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMailmatchRelationsTable extends Migration
+class CreateMailmatchMessageAttachmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateMailmatchRelationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mailmatch_relations', function (Blueprint $table) {
+        Schema::create('mailmatch_message_attachments', function (Blueprint $table) {
             $table->id();
+            $table->string('file');
             $table->integer('message_id')->unsigned()->index();
             $table->foreign('message_id')->references('id')->on('mailmatch_messages')->onDelete('cascade');
         });
@@ -27,6 +28,6 @@ class CreateMailmatchRelationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mailmatch_relations');
+        Schema::dropIfExists('mailmatch_message_attachments');
     }
 }

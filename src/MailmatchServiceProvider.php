@@ -20,6 +20,7 @@ class MailmatchServiceProvider extends ServiceProvider
 
         $this->publishMigrations();
 
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GoogleOAuthCommand::class,
@@ -35,21 +36,27 @@ class MailmatchServiceProvider extends ServiceProvider
      */
     protected function publishMigrations()
     {
-        if (! class_exists('CreateMailmatchAttachmentsTable')) {
-            $this->publishes([
-                __DIR__ . '/../database/migrations/create_mailmatch_attachments_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_mailmatch_attachments_table.php'),
-            ], 'migrations');
-        }
-
         if (! class_exists('CreateMailmatchMessagesTable')) {
             $this->publishes([
                 __DIR__ . '/../database/migrations/create_mailmatch_messages_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_mailmatch_messages_table.php'),
             ], 'migrations');
         }
 
-        if (! class_exists('CreateMailmatchRelationsTable')) {
+        if (! class_exists('CreateMailmatchMessageAttachmentsTable')) {
             $this->publishes([
-                __DIR__ . '/../database/migrations/create_mailmatch_relations_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_mailmatch_relations_table.php'),
+                __DIR__ . '/../database/migrations/create_mailmatch_message_attachments_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', (time() + 1)) . '_create_mailmatch_message_attachments_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('CreateMailmatchMessageRecipientsTable')) {
+            $this->publishes([
+                __DIR__ . '/../database/migrations/create_mailmatch_message_recipients_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', (time() + 1)) . '_create_mailmatch_message_recipients_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('CreateMailmatchMessageRelationsTable')) {
+            $this->publishes([
+                __DIR__ . '/../database/migrations/create_mailmatch_message_relations_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', (time() + 1)) . '_create_mailmatch_message_relations_table.php'),
             ], 'migrations');
         }
     }
