@@ -22,7 +22,7 @@ class CreateMailmatchMessagesTable extends Migration
             $table->string('subject');
             $table->longText('html');
             $table->longText('plain_text');
-            $table->timestamp('date');
+            $table->timestamp('datetime');
             $table->string('mailbox_key');
             $table->timestamps();
         });

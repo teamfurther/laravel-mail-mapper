@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $dates = [
-        'date',
+        'datetime',
     ];
 
     protected $fillable = [
         'bcc',
         'bcc_name',
-        'date',
+        'datetime',
         'from',
         'from_name',
         'html',
         'mailbox_key',
-        'plain_tex',
+        'plain_text',
         'subject',
     ];
 
