@@ -119,6 +119,15 @@ class Google implements DriverInterface
         return null;
     }
 
+    public function getEmails()
+    {
+        $client = $this->getClient();
+        $service = new \Google_Service_Gmail($client);
+        $result = $service->users_messages->get(config('mailmatch.services.google.user'), '1721422bfb64967c');
+
+        dd($result->getPayload());
+    }
+
     public function register()
     {
         echo 'Google';

@@ -31,10 +31,12 @@ return [
         'google' => [
             'client_id' => env('GOOGLE_CLIENT_ID'),
             'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+            'user' => 'me',
         ],
 
         'mailgun' => [
-            'key' => env('MAILGUN_KEY'),
+            'private_api_key' => env('MAILGUN_PRIVATE_API_KEY'),
+            'end_point' => env('MAILGUN_ENDPOINT'),
         ],
 
     ],
