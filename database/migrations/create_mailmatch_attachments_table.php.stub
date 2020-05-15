@@ -15,7 +15,7 @@ class CreateMailmatchAttachmentsTable extends Migration
     {
         Schema::create('mailmatch_attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('model_primary_key');
+            $table->string('file');
             $table->integer('message_id')->unsigned()->index();
             $table->foreign('message_id')->references('id')->on('mailmatch_messages')->onDelete('cascade');
         });

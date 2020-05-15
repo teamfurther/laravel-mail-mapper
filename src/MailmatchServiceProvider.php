@@ -18,6 +18,7 @@ class MailmatchServiceProvider extends ServiceProvider
 
         $this->publishMigrations();
 
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GoogleOAuthCommand::class,

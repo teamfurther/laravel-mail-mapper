@@ -18,8 +18,10 @@ class CreateMailmatchMessagesTable extends Migration
             $table->string('from');
             $table->string('to');
             $table->string('cc');
+            $table->string('bcc');
             $table->string('subject');
-            $table->text('body');
+            $table->longText('body');
+            $table->longText('plain_text_body');
             $table->timestamp('date');
             $table->string('mailbox_key');
             $table->timestamps();
