@@ -4,12 +4,12 @@ namespace Further\Mailmatch\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MailmatchRelation extends Model
+class MessageAttachment extends Model
 {
     protected $fillable = [
+        'file',
         'message_id',
-        'model_primary_key',
     ];
 
-    protected $table = 'mailmatch_attachments';
+    protected $table = 'mailmatch_message_attachments';
 }
