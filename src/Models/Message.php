@@ -43,10 +43,4 @@ class Message extends Model
     {
         return $this->hasMany('Further\Mailmatch\Models\MessageRecipients', 'message_id')->where('type', 'to');
     }
-
-    static public function test()
-    {
-        return '1';
-    }
-
 }
