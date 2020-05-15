@@ -34,6 +34,11 @@ class Message extends Model
         return $this->hasMany('Further\Mailmatch\Models\MessageRecipients', 'message_id')->where('type', 'cc');
     }
 
+    public static function createFromMessage($message)
+    {
+
+    }
+
     public function relations()
     {
         return $this->hasMany('Further\Mailmatch\Models\MessageRelation', 'message_id');
