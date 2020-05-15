@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Further\Mailmatch\Drivers;
 
-
-class GoogleDriver implements DriverInterface
+class Google implements DriverInterface
 {
     private const TOKEN_FILE = './vendor/teamfurther/laravel-mailmatch/google-token.json';
 
@@ -39,7 +37,7 @@ class GoogleDriver implements DriverInterface
             } else {
                 // Request authorization from the user.
                 $authUrl = $client->createAuthUrl();
-                printf("Open the following link in your browser:\n%s\n", $authUrl);
+                printf("\nOpen the following link in your browser:\n\n%s\n\n", $authUrl);
                 print 'Enter verification code: ';
                 $authCode = trim(fgets(STDIN));
 
@@ -70,8 +68,11 @@ class GoogleDriver implements DriverInterface
      */
     private function getConfig(): array
     {
-        if (config('mailmatch.services.google.client_secret') == '' || config('mailmatch.services.google.client_id') == '') {
-            throw new \Exception('You must provide the Google Client_ID and Client_Secret first!');
+        if (
+            config('mailmatch.services.google.client_secret') == ''
+            || config('mailmatch.services.google.client_id') == ''
+        ) {
+            throw new \Exception('Please provide the Google client_id and client_secret first!');
         }
 
         return [
@@ -98,5 +99,10 @@ class GoogleDriver implements DriverInterface
     private function generateToken()
     {
 
+    }
+
+    public function register()
+    {
+        echo 'Google';
     }
 }

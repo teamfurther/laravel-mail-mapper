@@ -26,6 +26,13 @@ Next, you need to publish the configuration file:
 
 ## Configuration
 
+### Using Google as the email provider
+
+1. Go to your Google Developers Console and enable the Gmail API.
+2. Create an OAuth consent screen. Make sure the application type is "Internal".
+3. Create an OAuth 2.0 client ID. Make sure the application type is "Other".
+4. Add your generated client ID and client secret to your .env file. Mailmatch looks for the GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET by default. 
+
 ## Credits
 
 - [Peter ILLÉS](https://github.com/ilpet)

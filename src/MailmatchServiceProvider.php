@@ -2,6 +2,8 @@
 
 namespace Further\Mailmatch;
 
+use Further\Mailmatch\Console\Commands\SyncCommand;
+use Further\Mailmatch\Facades\Mailmatch;
 use Illuminate\Support\ServiceProvider;
 use Further\Mailmatch\Console\Commands\GoogleOAuthCommand;
 
@@ -21,8 +23,11 @@ class MailmatchServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GoogleOAuthCommand::class,
+                SyncCommand::class,
             ]);
         }
+
+        $this->registerDriver();
     }
 
     /**
@@ -55,5 +60,17 @@ class MailmatchServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/mailmatch.php', 'mailmatch');
+
+        $this->app->singleton('mailmatch', function () {
+            return new MailmatchManager($this->app);
+        });
+    }
+
+    /**
+     * Registers the correct driver.
+     */
+    protected function registerDriver()
+    {
+        Mailmatch::register();
     }
 }
