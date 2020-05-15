@@ -6,7 +6,46 @@ namespace Further\Mailmatch\Drivers;
 
 class GoogleDriver implements DriverInterface
 {
+    /**
+     * Token file path.
+     *
+     * @var string
+     */
     private const TOKEN_FILE = './vendor/teamfurther/laravel-mailmatch/google-token.json';
+
+    /**
+     * Generate google token.
+     *
+     * @param \Google_Client $client
+     * @throws \Exception
+     */
+    private function generateToken(\Google_Client $client)
+    {
+        // Refresh the token if possible, else fetch a new one.
+        if ($client->getRefreshToken()) {
+            $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+        } else {
+            // Request authorization from the user.
+            $authUrl = $client->createAuthUrl();
+            printf("Open the following link in your browser:\n%s\n", $authUrl);
+            print 'Enter verification code: ';
+            $authCode = trim(fgets(STDIN));
+
+            // Exchange authorization code for an access token.
+            $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+            $client->setAccessToken($accessToken);
+
+            // Check to see if there was an error.
+            if (array_key_exists('error', $accessToken)) {
+                throw new \Exception(join(', ', $accessToken));
+            }
+        }
+        // Save the token to a file.
+        if (!file_exists(dirname(self::TOKEN_FILE))) {
+            mkdir(dirname(self::TOKEN_FILE), 0700, true);
+        }
+        file_put_contents(self::TOKEN_FILE, json_encode($client->getAccessToken()));
+    }
 
     /**
      * Get Google client.
@@ -33,30 +72,7 @@ class GoogleDriver implements DriverInterface
 
         // If there is no previous token or it's expired.
         if ($client->isAccessTokenExpired()) {
-            // Refresh the token if possible, else fetch a new one.
-            if ($client->getRefreshToken()) {
-                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-            } else {
-                // Request authorization from the user.
-                $authUrl = $client->createAuthUrl();
-                printf("Open the following link in your browser:\n%s\n", $authUrl);
-                print 'Enter verification code: ';
-                $authCode = trim(fgets(STDIN));
-
-                // Exchange authorization code for an access token.
-                $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-                $client->setAccessToken($accessToken);
-
-                // Check to see if there was an error.
-                if (array_key_exists('error', $accessToken)) {
-                    throw new \Exception(join(', ', $accessToken));
-                }
-            }
-            // Save the token to a file.
-            if (!file_exists(dirname(self::TOKEN_FILE))) {
-                mkdir(dirname(self::TOKEN_FILE), 0700, true);
-            }
-            file_put_contents(self::TOKEN_FILE, json_encode($client->getAccessToken()));
+           $this->generateToken($client);
         }
 
         return $client;
@@ -86,6 +102,11 @@ class GoogleDriver implements DriverInterface
         ];
     }
 
+    /**
+     * Get the token.
+     *
+     * @return mixed|null
+     */
     private function getToken()
     {
         if (file_exists(self::TOKEN_FILE)) {
@@ -93,10 +114,5 @@ class GoogleDriver implements DriverInterface
         }
 
         return null;
-    }
-
-    private function generateToken()
-    {
-
     }
 }
