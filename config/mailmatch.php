@@ -19,6 +19,11 @@ return [
     ],
 
     /*
+     * The model class.
+     */
+    'model' => \Further\Mailmatch\Models\Message::class,
+
+    /*
      * Third-party service configuration.
      */
     'services' => [
