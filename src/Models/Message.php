@@ -31,12 +31,38 @@ class Message extends Model
 
     public function cc()
     {
-        return $this->hasMany('Further\Mailmatch\Models\MessageRecipients', 'message_id')->where('type', 'cc');
+        return $this->hasMany('Further\Mailmatch\Models\MessageRecipient', 'message_id')->where('type', 'cc');
     }
 
     public static function createFromMessage($message)
     {
+        $messageObject = self::create([
+            'bcc' => $message['bcc'],
+            'bcc_name' => $message['bccName'],
+            'datetime' => $message['datetime'],
+            'from' => $message['from'],
+            'from_name' => $message['fromName'],
+            'html' => $message['html'],
+            'mailbox_key' => 'MyMailbox',
+            'plain_text' => $message['plainText'],
+            'subject' => $message['subject'],
+        ]);
 
+        $toRecipients = array_map(function ($item) {
+            $item['type'] = 'to';
+            return $item;
+        }, $message['toRecipients']);
+        $messageObject->to()->createMany($toRecipients);
+
+        if ($message['ccRecipients']) {
+            $ccRecipients = array_map(function ($item) {
+                $item['type'] = 'cc';
+                return $item;
+            }, $message['ccRecipients']);
+            $messageObject->to()->createMany($ccRecipients);
+        }
+
+        return $messageObject;
     }
 
     public function relations()
@@ -46,6 +72,6 @@ class Message extends Model
 
     public function to()
     {
-        return $this->hasMany('Further\Mailmatch\Models\MessageRecipients', 'message_id')->where('type', 'to');
+        return $this->hasMany('Further\Mailmatch\Models\MessageRecipient', 'message_id')->where('type', 'to');
     }
 }

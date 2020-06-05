@@ -14,4 +14,6 @@ class MessageRecipient extends Model
     ];
 
     protected $table = 'mailmatch_message_recipients';
+
+    public $timestamps = false;
 }
