@@ -4,7 +4,7 @@ namespace Further\Mailmatch\Drivers;
 
 use Google_Client;
 
-class Google implements DriverInterface
+class Google
 {
     /**
      * Token file path.

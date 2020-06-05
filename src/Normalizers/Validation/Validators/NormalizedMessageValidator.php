@@ -44,7 +44,7 @@ class NormalizedMessageValidator implements Validator
             'subject' => [IsString::class, IsRequired::class],
             'toRecipients' => [IsArray::class, IsRequired::class],
             'toRecipients.email' => [IsEmail::class, IsRequired::class],
-            'toRecipients.name' => [IsString::class, IsRequired::class],
+            'toRecipients.name' => [IsString::class],
         ];
     }
 

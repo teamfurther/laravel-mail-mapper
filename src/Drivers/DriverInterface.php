@@ -8,5 +8,5 @@ interface DriverInterface
 {
     public function register();
 
-//    public function get();
+    public function store($event);
 }
