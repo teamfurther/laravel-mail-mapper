@@ -5,10 +5,23 @@ namespace Further\Mailmatch\Drivers;
 use Carbon\Carbon;
 use Further\Mailmatch\Models\Message;
 use Further\Mailmatch\Normalizers\MessageNormalizer;
+use Further\Mailmatch\Services\LogService;
 use Illuminate\Mail\Events\MessageSent;
 
 class Log implements DriverInterface
 {
+    /**
+     * @TODO: switch to type-hinting once support for PHP7.3 is over
+     *
+     * @var LogService
+     */
+    private $logService;
+
+    public function __construct()
+    {
+        $this->logService = resolve('Further\Mailmatch\Services\LogService');
+    }
+
     public function register()
     {
         app('events')->listen(MessageSent::class, [$this, 'store']);
@@ -24,39 +37,20 @@ class Log implements DriverInterface
         }
 
         try {
-            $ccRecipients = [];
-            $recipients = [];
-
-            if ($event->message->getCc()) {
-                foreach ($event->message->getCc() as $email => $name) {
-                    $ccRecipients[] = [
-                        'email' => $email,
-                        'name' => $name
-                    ];
-                }
-            }
-
-            if ($event->message->getTo()) {
-                foreach ($event->message->getTo() as $email => $name) {
-                    $recipients[] = [
-                        'email' => $email,
-                        'name' => $name
-                    ];
-                }
-            }
-
+            // normalize message
             $normalizedMessage = (new MessageNormalizer())
-                ->setBcc(array_keys($event->message->getBcc())[0])
-                ->setBccName(array_values($event->message->getBcc())[0])
-                ->setCcRecipients($ccRecipients)
+                ->setBcc($this->logService->getBccFieldFromMessage($event->message))
+                ->setBccName($this->logService->getBccNameFieldFromMessage($event->message))
+                ->setCcRecipients($this->logService->getCCRecipientsArrayFromMessage($event->message))
                 ->setDatetime(Carbon::parse($event->message->getDate()))
-                ->setFrom(array_keys($event->message->getFrom())[0])
-                ->setFromName(array_values($event->message->getFrom())[0])
+                ->setFrom($this->logService->getFromFieldFromMessage($event->message))
+                ->setFromName($this->logService->getFromNameFieldFromMessage($event->message))
                 ->setHtml($event->message->getBody())
                 ->setSubject($event->message->getSubject())
-                ->setToRecipients($recipients)
+                ->setToRecipients($this->logService->getRecipientsArrayFromMessage($event->message))
                 ->save();
 
+            // create and store message
             Message::createFromMessage($normalizedMessage);
         } catch (\Exception $exception) {
             print $exception->getMessage();
