@@ -62,7 +62,41 @@ class Message extends Model
             $messageObject->to()->createMany($ccRecipients);
         }
 
+        $messageObject->createRelationships();
+
         return $messageObject;
+    }
+
+    private function createRelationships()
+    {
+        $relationships = config('mailmatch.mailboxes.' . $this->mailbox_key . '.relationships');
+
+        if (!$relationships) {
+            return false;
+        }
+
+        foreach ($relationships as $relationship) {
+            $owners = $relationship['owner']::all();
+
+            if (!$owners) {
+                continue;
+            }
+
+            $owners->each(function ($owner) use ($relationship) {
+                $ruleResult = ($relationship['rule'] instanceof \Closure)
+                    ? $relationship['rule']->call(new Message(), $this, $owner)
+                    : (new $relationship['rule'])->handle($this, $owner);
+
+                if ($ruleResult) {
+                    $this->relations()->create([
+                        'owner' => $relationship['owner'],
+                        'owner_id' => $owner->id,
+                    ]);
+                }
+            });
+        };
+
+        return true;
     }
 
     public function relations()

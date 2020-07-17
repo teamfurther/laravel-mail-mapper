@@ -15,6 +15,7 @@ class CreateMailmatchMessageRelationsTable extends Migration
     {
         Schema::create('mailmatch_message_relations', function (Blueprint $table) {
             $table->id();
+            $table->string('owner');
             $table->string('owner_id');
             $table->unsignedBigInteger('message_id')->index();
             $table->foreign('message_id')->references('id')->on('mailmatch_messages')->onDelete('cascade');
