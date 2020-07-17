@@ -15,7 +15,7 @@ class GoogleService
      *
      * @var string
      */
-    private const TOKEN_FILE = './vendor/teamfurther/laravel-mailmatch/google-token.json';
+    private const TOKEN_PATH = './vendor/teamfurther/laravel-mailmatch/';
 
     private function convertEmailStringToArray(string $emailString): array
     {
@@ -37,8 +37,10 @@ class GoogleService
         return $decodedMessage;
     }
 
-    private function generateToken(Google_Client $client)
+    private function generateToken(Google_Client $client, string $key)
     {
+        $tokenName = $key . '.json';
+
         // Refresh the token if possible, else fetch a new one.
         if ($client->getRefreshToken()) {
             $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
@@ -59,10 +61,10 @@ class GoogleService
             }
         }
         // Save the token to a file.
-        if (!file_exists(dirname(self::TOKEN_FILE))) {
-            mkdir(dirname(self::TOKEN_FILE), 0700, true);
+        if (!file_exists(dirname(self::TOKEN_PATH . $tokenName))) {
+            mkdir(dirname(self::TOKEN_PATH . $tokenName), 0700, true);
         }
-        file_put_contents(self::TOKEN_FILE, json_encode($client->getAccessToken()));
+        file_put_contents(self::TOKEN_PATH . $tokenName, json_encode($client->getAccessToken()));
     }
 
     public function getBccFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
@@ -111,7 +113,7 @@ class GoogleService
         return null;
     }
 
-    public function getClient(): Google_Client
+    public function getClient(string $key): Google_Client
     {
         $client = new Google_Client();
         $client->setScopes(Google_Service_Gmail::GMAIL_READONLY);
@@ -124,13 +126,13 @@ class GoogleService
         // created automatically when the authorization flow completes for the first
         // time.
 
-        if ($this->getToken()) {
-            $client->setAccessToken($this->getToken());
+        if ($this->getToken($key)) {
+            $client->setAccessToken($this->getToken($key));
         }
 
         // If there is no previous token or it's expired.
         if ($client->isAccessTokenExpired()) {
-            $this->generateToken($client);
+            $this->generateToken($client, $key);
         }
 
         return $client;
@@ -160,11 +162,11 @@ class GoogleService
     /**
      * @return Google_Service_Gmail_MessagePart[]
      */
-    public function getEmails(): array
+    public function getEmails(string $key): array
     {
-        $client = $this->getClient();
+        $client = $this->getClient($key);
         $service = new Google_Service_Gmail($client);
-        $userId = config('mailmatch.services.google.user');
+        $userId = 'me';
         $messages = $this->getListUsersMessages($service, $userId, ['q' => 'newer_than:1d']);
         $result = [];
 
@@ -203,8 +205,14 @@ class GoogleService
     {
         foreach ($message->getParts() as $part) {
             /** @var Google_Service_Gmail_MessagePart $part */
-            if ($part->mimeType == 'text/html') {
+            if (strpos($part->mimeType, 'html') !== false) {
                 return $this->decodeBody($part->getBody()->data);
+            } elseif (strpos($part->mimeType, 'multipart') !== false) {
+                foreach ($part->getParts() as $p) {
+                    if (strpos($p->mimeType, 'html') !== false) {
+                        return $this->decodeBody($p->getBody()->data);
+                    }
+                }
             }
         }
 
@@ -230,6 +238,18 @@ class GoogleService
         } while ($pageToken);
 
         return $messages;
+    }
+
+    public function getPlainTextFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
+    {
+        foreach ($message->getParts() as $part) {
+            /** @var Google_Service_Gmail_MessagePart $part */
+            if (strpos($part->mimeType, 'plain') !== false) {
+                return $this->decodeBody($part->getBody()->data);
+            }
+        }
+
+        return null;
     }
 
     public function getRecipientsArrayFromMessage(Google_Service_Gmail_MessagePart $message): ?array
@@ -266,10 +286,12 @@ class GoogleService
         return null;
     }
 
-    private function getToken()
+    private function getToken(string $key)
     {
-        if (file_exists(self::TOKEN_FILE)) {
-            return json_decode(file_get_contents(self::TOKEN_FILE), true);
+        $tokenName = $key . '.json';
+
+        if (file_exists(self::TOKEN_PATH . $tokenName)) {
+            return json_decode(file_get_contents(self::TOKEN_PATH . $tokenName), true);
         }
 
         return null;

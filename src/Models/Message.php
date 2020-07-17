@@ -43,7 +43,7 @@ class Message extends Model
             'from' => $message['from'],
             'from_name' => $message['fromName'],
             'html' => $message['html'],
-            'mailbox_key' => 'MyMailbox',
+            'mailbox_key' => $message['mailbox'],
             'plain_text' => $message['plainText'],
             'subject' => $message['subject'],
         ]);

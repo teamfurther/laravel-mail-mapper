@@ -14,6 +14,7 @@ class MessageNormalizer
     private $from;
     private $fromName;
     private $html;
+    private $mailbox;
     private $plainText;
     private $subject;
     private $toRecipients;
@@ -90,6 +91,13 @@ class MessageNormalizer
         return $this;
     }
 
+    public function setMailbox(string $mailbox): MessageNormalizer
+    {
+        $this->mailbox = $mailbox;
+
+        return $this;
+    }
+
     public function setPlainText($plainText): MessageNormalizer
     {
         $this->plainText = $plainText;
@@ -122,6 +130,7 @@ class MessageNormalizer
             'from' => $this->from,
             'fromName' => $this->fromName,
             'html' => $this->html,
+            'mailbox' => $this->mailbox,
             'plainText' => $this->plainText,
             'subject' => $this->subject,
             'toRecipients' => $this->toRecipients,

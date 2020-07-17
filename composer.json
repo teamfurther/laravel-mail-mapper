@@ -31,7 +31,7 @@
     }
   ],
   "require": {
-    "php": "^7.2",
+    "php": "^7.4.*",
     "google/apiclient": "^2.4",
     "illuminate/console": "^7.0",
     "illuminate/database": "^7.0",
