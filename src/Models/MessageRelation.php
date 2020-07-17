@@ -8,8 +8,11 @@ class MessageRelation extends Model
 {
     protected $fillable = [
         'message_id',
-        'model_primary_key',
+        'owner',
+        'owner_id',
     ];
 
     protected $table = 'mailmatch_message_relations';
+
+    public $timestamps = false;
 }

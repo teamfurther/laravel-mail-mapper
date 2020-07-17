@@ -12,4 +12,6 @@ class MessageAttachment extends Model
     ];
 
     protected $table = 'mailmatch_message_attachments';
+
+    public $timestamps = false;
 }
