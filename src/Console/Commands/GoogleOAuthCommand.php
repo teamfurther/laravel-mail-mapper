@@ -2,7 +2,7 @@
 
 namespace Further\Mailmatch\Console\Commands;
 
-use Further\Mailmatch\Drivers\Google;
+use Further\Mailmatch\Services\GoogleService;
 use Illuminate\Console\Command;
 
 class GoogleOAuthCommand extends Command
@@ -13,9 +13,9 @@ class GoogleOAuthCommand extends Command
     protected $description = 'Generates the OAuth token to used by the Gmail API';
 
     /**
-     * @var Google
+     * @var GoogleService
      */
-    protected $google;
+    protected $googleService;
 
     /**
      * The name and signature of the console command.
@@ -24,12 +24,13 @@ class GoogleOAuthCommand extends Command
 
     /**
      * Create a new command instance.
+     * @param GoogleService $google
      */
-    public function __construct(Google $google)
+    public function __construct(GoogleService $google)
     {
         parent::__construct();
 
-        $this->google = $google;
+        $this->googleService = $google;
     }
 
     /**
@@ -40,7 +41,7 @@ class GoogleOAuthCommand extends Command
     public function handle()
     {
         try {
-            $this->google->getClient();
+            $this->googleService->getClient();
         } catch (\Exception $exception) {
             $this->error($exception->getMessage());
 

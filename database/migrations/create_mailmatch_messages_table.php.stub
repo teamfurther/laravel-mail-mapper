@@ -16,12 +16,12 @@ class CreateMailmatchMessagesTable extends Migration
         Schema::create('mailmatch_messages', function (Blueprint $table) {
             $table->id();
             $table->string('from');
-            $table->string('from_name')->nullable;
-            $table->string('bcc')->nullable;
-            $table->string('bcc_name')->nullable;
+            $table->string('from_name')->nullable();
+            $table->string('bcc')->nullable();
+            $table->string('bcc_name')->nullable();
             $table->string('subject');
             $table->longText('html');
-            $table->longText('plain_text')->nullable;
+            $table->longText('plain_text')->nullable();
             $table->timestamp('datetime');
             $table->string('mailbox_key');
             $table->timestamps();
