@@ -18,6 +18,11 @@ class MailmatchManager extends Manager
         return new Log;
     }
 
+    public function createMailgunDriver()
+    {
+//        return new Mailgun;
+    }
+
     public function getDefaultDriver()
     {
         return $this->container['config']['mailmatch.driver'];
