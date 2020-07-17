@@ -14,7 +14,20 @@ return [
      */
     'mailboxes' => [
         'my_mailbox' => [
-
+            'relationships' => [
+                [
+                    'name' => 'messages',
+                    'owner' => \App\User::class,
+                    'rule' => function($message, $owner) {
+                        return $message->to === $owner->email || $message->from === $owner->email;
+                    },
+                ],
+                [
+                    'name' => 'activity',
+                    'owner' => \App\Project::class,
+                    'rule' => \App\Rules\ProjectActivityRule::class, // must extend Further\Mailmatch\Contracts\RelationshipRule
+                ],
+            ]
         ]
     ],
 

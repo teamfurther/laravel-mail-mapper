@@ -28,9 +28,9 @@ class Log implements DriverInterface
     }
 
     /**
-     * @param MessageSent $event
+     * @param MessageSent $message
      */
-    public function store($event)
+    public function store($message)
     {
         if (config('mail.default') !== 'log') {
             return;
@@ -39,15 +39,15 @@ class Log implements DriverInterface
         try {
             // normalize message
             $normalizedMessage = (new MessageNormalizer())
-                ->setBcc($this->logService->getBccFieldFromMessage($event->message))
-                ->setBccName($this->logService->getBccNameFieldFromMessage($event->message))
-                ->setCcRecipients($this->logService->getCCRecipientsArrayFromMessage($event->message))
-                ->setDatetime(Carbon::parse($event->message->getDate()))
-                ->setFrom($this->logService->getFromFieldFromMessage($event->message))
-                ->setFromName($this->logService->getFromNameFieldFromMessage($event->message))
-                ->setHtml($event->message->getBody())
-                ->setSubject($event->message->getSubject())
-                ->setToRecipients($this->logService->getRecipientsArrayFromMessage($event->message))
+                ->setBcc($this->logService->getBccFieldFromMessage($message->message))
+                ->setBccName($this->logService->getBccNameFieldFromMessage($message->message))
+                ->setCcRecipients($this->logService->getCCRecipientsArrayFromMessage($message->message))
+                ->setDatetime(Carbon::parse($message->message->getDate()))
+                ->setFrom($this->logService->getFromFieldFromMessage($message->message))
+                ->setFromName($this->logService->getFromNameFieldFromMessage($message->message))
+                ->setHtml($message->message->getBody())
+                ->setSubject($message->message->getSubject())
+                ->setToRecipients($this->logService->getRecipientsArrayFromMessage($message->message))
                 ->save();
 
             // create and store message
@@ -55,5 +55,10 @@ class Log implements DriverInterface
         } catch (\Exception $exception) {
             print $exception->getMessage();
         }
+    }
+
+    public function sync()
+    {
+        //
     }
 }
