@@ -17,7 +17,7 @@ class CreateMailmatchMessageRecipientsTable extends Migration
             $table->id();
             $table->string('email');
             $table->string('name')->nullable();
-            $table->integer('message_id')->unsigned()->index();
+            $table->unsignedBigInteger('message_id')->index();
             $table->foreign('message_id')->references('id')->on('mailmatch_messages')->onDelete('cascade');
             $table->enum('type', ['cc', 'to']);
         });

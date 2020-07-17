@@ -133,7 +133,7 @@ class GoogleService
         $client = $this->getClient();
         $service = new Google_Service_Gmail($client);
         $userId = config('mailmatch.services.google.user');
-        $messages = $this->getListUsersMessages($service, $userId, ['q' => 'bcc:csongor.ur@gofurther.digital']);
+        $messages = $this->getListUsersMessages($service, $userId, ['q' => 'newer_than:1d']);
         $result = [];
 
         foreach ($messages as $message) {
