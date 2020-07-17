@@ -62,4 +62,9 @@ class Log implements DriverInterface
             print $exception->getMessage();
         }
     }
+
+    public function sync()
+    {
+        // TODO: Implement sync() method.
+    }
 }
