@@ -36,15 +36,15 @@ class Google implements DriverInterface
 
             foreach ($emails as $email) {
                 $normalizedMessage = (new MessageNormalizer())
-                    ->setBcc($email['bcc'])
-                    ->setBccName($email['bccName'])
-                    ->setCcRecipients($email['ccRecipients'])
+                    ->setBcc($this->googleService->getBccFieldFromMessage($email))
+                    ->setBccName($this->googleService->getBccNameFieldFromMessage($email))
+                    ->setCcRecipients($this->googleService->getCCRecipientsArrayFromMessage($email))
                     ->setDatetime(Carbon::parse($email['dateTime']))
-                    ->setFrom($email['from'])
-                    ->setFromName($email['fromName'])
-                    ->setHtml($email['html'])
-                    ->setSubject($email['to'])
-                    ->setToRecipients($email['recipients'])
+                    ->setFrom($this->googleService->getFromFieldFromMessage($email))
+                    ->setFromName($this->googleService->getFromNameFieldFromMessage($email))
+                    ->setHtml($this->googleService->getHtmlFieldFromMessage($email))
+                    ->setSubject($this->googleService->getSubjectFieldFromMessage($email))
+                    ->setToRecipients($this->googleService->getRecipientsArrayFromMessage($email))
                     ->save();
 
                 Message::createFromMessage($normalizedMessage);

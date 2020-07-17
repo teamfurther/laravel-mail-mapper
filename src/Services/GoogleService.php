@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Further\Mailmatch\Services;
-
 
 use Exception;
 use Google_Client;
@@ -67,19 +65,50 @@ class GoogleService
         file_put_contents(self::TOKEN_FILE, json_encode($client->getAccessToken()));
     }
 
-    private function getCcRecipients(Google_Service_Gmail_MessagePartHeader $header): array
+    public function getBccFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
     {
-        $result = [];
-        $ccRecipients = explode(',', $header->getValue());
-
-        foreach ($ccRecipients as $ccRecipient) {
-            $result[] = [
-                'email' => $this->convertEmailStringToArray($ccRecipient)['email'],
-                'name' => $this->convertEmailStringToArray($ccRecipient)['name'],
-            ];
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'Bcc') {
+                return $this->convertEmailStringToArray($header->getValue())['email'];
+            }
         }
 
-        return $result;
+        return null;
+    }
+
+    public function getBccNameFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
+    {
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'Bcc') {
+                return $this->convertEmailStringToArray($header->getValue())['name'];
+            }
+        }
+
+        return null;
+    }
+
+    public function getCCRecipientsArrayFromMessage(Google_Service_Gmail_MessagePart $message): ?array
+    {
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'Cc') {
+                $result = [];
+                $recipients = explode(',', $header->getValue());
+
+                foreach ($recipients as $recipient) {
+                    $result[] = [
+                        'email' => $this->convertEmailStringToArray($recipient)['email'],
+                        'name' => $this->convertEmailStringToArray($recipient)['name'],
+                    ];
+                }
+
+                return $result;
+            }
+        }
+
+        return null;
     }
 
     public function getClient(): Google_Client
@@ -128,6 +157,9 @@ class GoogleService
         ];
     }
 
+    /**
+     * @return Google_Service_Gmail_MessagePart[]
+     */
     public function getEmails(): array
     {
         $client = $this->getClient();
@@ -137,50 +169,37 @@ class GoogleService
         $result = [];
 
         foreach ($messages as $message) {
-            $email = $service->users_messages->get($userId, $message->getId())->getPayload();
-
-            $result[] = array_merge($this->getHeaders($email), [
-                'html' => $this->getHtmlContent($email)
-            ]);
+            $result[] = $service->users_messages->get($userId, $message->getId())->getPayload();
         }
 
         return $result;
     }
 
-    private function getHeaders(Google_Service_Gmail_MessagePart $message): array
+    public function getFromFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
     {
-        $headers = [];
-
-        /** @var Google_Service_Gmail_MessagePartHeader $header **/
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
         foreach ($message->getHeaders() as $header) {
-            switch ($header->getName()) {
-                case ('From'):
-                    $headers['from'] = $this->convertEmailStringToArray($header->getValue())['email'];
-                    $headers['fromName'] = $this->convertEmailStringToArray($header->getValue())['name'];
-                    break;
-                case ('Date'):
-                    $headers['dateTime'] = $header->getValue();
-                    break;
-                case ('Subject'):
-                    $headers['subject'] = $header->getValue();
-                    break;
-                case ('Cc'):
-                    $headers['ccRecipients'] = $this->getCcRecipients($header);
-                    break;
-                case ('To'):
-                    $headers['recipients'] = $this->getRecipients($header);
-                    break;
-                case ('Bcc'):
-                    $headers['bcc'] = $this->convertEmailStringToArray($header->getValue())['email'];
-                    $headers['bccName'] = $this->convertEmailStringToArray($header->getValue())['name'];
-                    break;
+            if ($header->getName() == 'From') {
+                return $this->convertEmailStringToArray($header->getValue())['email'];
             }
         }
 
-        return $headers;
+        return null;
     }
 
-    private function getHtmlContent(Google_Service_Gmail_MessagePart $message): string
+    public function getFromNameFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
+    {
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'From') {
+                return $this->convertEmailStringToArray($header->getValue())['name'];
+            }
+        }
+
+        return null;
+    }
+
+    public function getHtmlFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
     {
         foreach ($message->getParts() as $part) {
             /** @var Google_Service_Gmail_MessagePart $part */
@@ -188,7 +207,8 @@ class GoogleService
                 return $this->decodeBody($part->getBody()->data);
             }
         }
-        return '';
+
+        return null;
     }
 
     private function getListUsersMessages(Google_Service_Gmail $service, string $userId, array $opt): array
@@ -212,19 +232,38 @@ class GoogleService
         return $messages;
     }
 
-    private function getRecipients(Google_Service_Gmail_MessagePartHeader $header): array
+    public function getRecipientsArrayFromMessage(Google_Service_Gmail_MessagePart $message): ?array
     {
-        $result = [];
-        $recipients = explode(',', $header->getValue());
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'To') {
+                $result = [];
+                $recipients = explode(',', $header->getValue());
 
-        foreach ($recipients as $recipient) {
-            $result[] = [
-                'email' => $this->convertEmailStringToArray($recipient)['email'],
-                'name' => $this->convertEmailStringToArray($recipient)['name'],
-            ];
+                foreach ($recipients as $recipient) {
+                    $result[] = [
+                        'email' => $this->convertEmailStringToArray($recipient)['email'],
+                        'name' => $this->convertEmailStringToArray($recipient)['name'],
+                    ];
+                }
+
+                return $result;
+            }
         }
 
-        return $result;
+        return null;
+    }
+
+    public function getSubjectFieldFromMessage(Google_Service_Gmail_MessagePart $message): ?string
+    {
+        /** @var Google_Service_Gmail_MessagePartHeader $header */
+        foreach ($message->getHeaders() as $header) {
+            if ($header->getName() == 'Subject') {
+                return $header->getValue();
+            }
+        }
+
+        return null;
     }
 
     private function getToken()
